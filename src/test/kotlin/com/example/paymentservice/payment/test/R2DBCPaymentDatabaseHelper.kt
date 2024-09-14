@@ -50,8 +50,8 @@ class R2DBCPaymentDatabaseHelper(
 
     companion object {
         val SELECT_PAYMENT_QUERY = """
-            SELECT * FROM payment_events_pe
-            INNER JOIN payment_orders_po ON pe.order_id = po.order_id
+            SELECT * FROM payment_events pe
+            INNER JOIN payment_orders po ON pe.order_id = po.order_id
             WHERE pe.order_id = :orderId
         """.trimIndent()
     }

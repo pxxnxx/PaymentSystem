@@ -23,7 +23,7 @@ class R2DBCPaymentRepository(
 
     private fun insertPaymentOrders(paymentEvent: PaymentEvent, paymentEventId: Long?): Mono<Long> {
         val valueClauses = paymentEvent.paymentOrders.joinToString(", ") { paymentOrder ->
-            "($paymentEventId, ${paymentOrder.sellerId}, '${paymentOrder.orderId}', ${paymentOrder.productId}, ${paymentOrder.amount}, '${paymentOrder.paymentStatus}'"
+            "($paymentEventId, ${paymentOrder.sellerId}, '${paymentOrder.orderId}', ${paymentOrder.productId}, ${paymentOrder.amount}, '${paymentOrder.paymentStatus}')"
         }
         return databaseClient.sql(INSERT_PAYMENT_ORDER_QUERY(valueClauses))
             .fetch()
