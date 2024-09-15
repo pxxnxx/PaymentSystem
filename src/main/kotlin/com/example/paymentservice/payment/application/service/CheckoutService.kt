@@ -18,7 +18,7 @@ class CheckoutService(
     private val savePaymentPort: SavePaymentPort
 ) : CheckoutUseCase {
     override fun checkout(command: CheckoutCommand): Mono<CheckoutResult> {
-        return loadProductPort.getProducts(command.cardId, command.productIds)
+        return loadProductPort.getProducts(command.cartId, command.productIds)
             .collectList()
             .map { createPaymentEvent(command, it) }
             .flatMap { savePaymentPort.save(it).thenReturn(it) }

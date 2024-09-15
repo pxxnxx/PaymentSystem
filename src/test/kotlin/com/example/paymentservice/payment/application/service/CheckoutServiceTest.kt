@@ -8,9 +8,11 @@ import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Assertions.assertFalse
 import org.junit.jupiter.api.Assertions.assertTrue
 import org.junit.jupiter.api.Test
+import org.junit.jupiter.api.assertThrows
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.context.SpringBootTest
 import org.springframework.context.annotation.Import
+import org.springframework.dao.DataIntegrityViolationException
 import reactor.test.StepVerifier
 import java.util.UUID
 
@@ -24,7 +26,7 @@ class CheckoutServiceTest(
     fun `should save PaymentEvent and PaymentOrder successfully`() {
         val orderId = UUID.randomUUID().toString()
         val checkoutCommand = CheckoutCommand(
-            cardId = 1,
+            cartId = 1,
             buyerId = 1,
             productIds = listOf(1, 2, 3),
             idempotencyKey = orderId
@@ -44,4 +46,20 @@ class CheckoutServiceTest(
         assertTrue(paymentEvent.paymentOrders.all { !it.isWalletUpdated()})
     }
 
+    @Test
+    fun `should fail to save PaymentEvent and PaymentOrder when trying to save for the second time`() {
+        val orderId = UUID.randomUUID().toString();
+        val checkoutCommand = CheckoutCommand(
+            cartId = 1,
+            buyerId = 1,
+            productIds = listOf(1, 2, 3),
+            idempotencyKey = orderId
+        )
+
+        checkoutUseCase.checkout(checkoutCommand).block()
+
+        assertThrows<DataIntegrityViolationException> {
+            checkoutUseCase.checkout(checkoutCommand).block()
+        }
+    }
 }

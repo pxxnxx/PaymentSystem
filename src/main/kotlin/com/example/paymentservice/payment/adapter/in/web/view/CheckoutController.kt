@@ -20,7 +20,7 @@ class CheckoutController(
     @GetMapping("/")
     fun checkoutPage(request: CheckoutRequest, model: Model): Mono<String> {
         val command = CheckoutCommand(
-            cardId = request.cartId,
+            cartId = request.cartId,
             buyerId = request.buyerId,
             productIds = request.productIds,
             idempotencyKey = IdempotencyCreator.create(request.seed) // 원래 request 자체가 와야함
