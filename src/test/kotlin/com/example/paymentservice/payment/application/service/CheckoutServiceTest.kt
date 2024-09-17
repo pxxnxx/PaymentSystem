@@ -7,6 +7,7 @@ import com.example.paymentservice.payment.test.PaymentTestConfiguration
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Assertions.assertFalse
 import org.junit.jupiter.api.Assertions.assertTrue
+import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.assertThrows
 import org.springframework.beans.factory.annotation.Autowired
@@ -22,6 +23,12 @@ class CheckoutServiceTest(
     @Autowired private val checkoutUseCase: CheckoutUseCase,
     @Autowired private val paymentDatabaseHelper: PaymentDatabaseHelper
 ) {
+
+    @BeforeEach
+    fun setup() {
+        paymentDatabaseHelper.clean().block()
+    }
+
     @Test
     fun `should save PaymentEvent and PaymentOrder successfully`() {
         val orderId = UUID.randomUUID().toString()
